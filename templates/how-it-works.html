@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fake News Detector | How It Works</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js for interactions -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/alpinejs/3.12.0/cdn.min.js" defer></script>
+    <!-- AOS for animations -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <link rel="icon" href="https://i.postimg.cc/JnrwZ8tQ/logo.png" type="image/icon type">
+    <style>
+        .fade-in { animation: fadeIn 0.8s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        
+        .slide-up { animation: slideUp 0.6s ease-out; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        /* Gradient animation for header */
+        .gradient-animation {
+            background: linear-gradient(-45deg, #3b82f6, #1e40af, #8b5cf6, #3b82f6);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+        }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            600: '#0284c7',
+                        },
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-30">
+        <div class="container mx-auto px-4 py-3">
+            <div class="flex justify-between items-center">
+                <div class="flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zm-2 4a2 2 0 114 0 2 2 0 01-4 0z" clip-rule="evenodd" />
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                    <span class="ml-2 text-xl font-bold text-gray-800">Fake News Detector</span>
+                </div>
+                
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="font-medium hover:text-primary-600 transition-colors">Home</a>
+                    <a href="/analyze" class="font-medium hover:text-primary-600 transition-colors">Analyze</a>
+                    <a href="/how-it-works" class="font-medium hover:text-primary-600 transition-colors border-b-2 border-primary-600">How It Works</a>
+                    <a href="/about" class="font-medium hover:text-primary-600 transition-colors">About</a>
+                </div>
+                
+                <div class="md:hidden" x-data="{ open: false }">
+                    <button @click="open = !open" class="text-gray-500 hover:text-gray-700 focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                    
+                    <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 z-10">
+                        <a href="/" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Home</a>
+                        <a href="/analyze" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Analyze</a>
+                        <a href="/how-it-works" class="block px-4 py-2 text-blue-600 font-medium hover:bg-gray-100">How It Works</a>
+                        <a href="/about" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">About</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header Section -->
+    <header class="gradient-animation text-white py-16 md:py-24">
+        <div class="container mx-auto px-4 text-center">
+            <h1 data-aos="fade-down" class="text-4xl md:text-5xl font-bold mb-6">How It Works</h1>
+            <p data-aos="fade-up" data-aos-delay="100" class="text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto">
+                Understanding the technology behind our fake news detection system
+            </p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12 flex-grow">
+        <!-- Overview Section -->
+        <section class="mb-16">
+            <div data-aos="fade-up" class="bg-white rounded-xl shadow-md p-8 max-w-4xl mx-auto">
+                <h2 class="text-2xl font-bold text-gray-800 mb-6">System Overview</h2>
+                <p class="text-gray-600 mb-6">
+                    Our fake news detection system uses natural language processing and machine learning 
+                    techniques to analyze the content of news articles and determine the likelihood that 
+                    they contain misinformation. The system works in multiple stages:
+                </p>
+                
+                <div class="space-y-8">
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 rounded-full p-3 mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">1. Text Preprocessing</h3>
+                            <p class="text-gray-600">
+                                When you submit a news article, our system first cleans and standardizes the text by 
+                                removing special characters, converting to lowercase, eliminating URLs, and 
+                                filtering out irrelevant content to prepare it for analysis.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 rounded-full p-3 mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">2. Feature Extraction</h3>
+                            <p class="text-gray-600">
+                                The system then converts the cleaned text into numerical features using TF-IDF 
+                                (Term Frequency-Inverse Document Frequency) vectorization. This technique identifies 
+                                words and phrases that are significant in determining whether news is fake or real.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 rounded-full p-3 mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">3. Multi-Model Analysis</h3>
+                            <p class="text-gray-600">
+                                The extracted features are then analyzed by four different machine learning models, each 
+                                with its own strengths. By using multiple models, we reduce bias and increase 
+                                the reliability of our predictions.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="bg-blue-100 rounded-full p-3 mr-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-800 mb-2">4. Consensus Verdict</h3>
+                            <p class="text-gray-600">
+                                Finally, the system combines the predictions from all models to produce a consensus 
+                                verdict, along with confidence levels. This ensemble approach provides a more 
+                                robust assessment than any single model could provide.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Models Section -->
+        <section class="mb-16">
+            <h2 data-aos="fade-right" class="text-3xl font-bold text-gray-800 mb-8 text-center">Our Machine Learning Models</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div data-aos="fade-up" data-aos-delay="0" class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border-t-4 border-blue-500">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Logistic Regression</h3>
+                    <p class="text-gray-600 mb-4">
+                        A statistical model that analyzes the relationship between the features of the text and its classification.
+                        Logistic regression excels at finding linear relationships in the data.
+                    </p>
+                    <p class="text-gray-600">
+                        <strong>Strength:</strong> Simple, interpretable, and works well with high-dimensional text data.
+                    </p>
+                </div>
+                
+                <div data-aos="fade-up" data-aos-delay="100" class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border-t-4 border-purple-500">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Decision Tree</h3>
+                    <p class="text-gray-600 mb-4">
+                        A tree-like model that makes decisions based on specific textual features, following different paths
+                        through the tree until reaching a classification.
+                    </p>
+                    <p class="text-gray-600">
+                        <strong>Strength:</strong> Can capture non-linear patterns and is good at handling various types of features.
+                    </p>
+                </div>
+                
+                <div data-aos="fade-up" data-aos-delay="200" class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border-t-4 border-green-500">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Gradient Boosting</h3>
+                    <p class="text-gray-600 mb-4">
+                        An ensemble technique that builds models sequentially, with each new model correcting errors made by previous ones.
+                        This creates a powerful, adaptive classifier.
+                    </p>
+                    <p class="text-gray-600">
+                        <strong>Strength:</strong> High accuracy and ability to handle complex patterns in the data.
+                    </p>
+                </div>
+                
+                <div data-aos="fade-up" data-aos-delay="300" class="bg-white rounded-xl shadow-md hover:shadow-lg transition-shadow p-6 border-t-4 border-orange-500">
+                    <h3 class="text-xl font-semibold text-gray-800 mb-4">Random Forest</h3>
+                    <p class="text-gray-600 mb-4">
+                        A method that constructs multiple decision trees during training and outputs the class that is the 
+                        mode of the classes of individual trees.
+                    </p>
+                    <p class="text-gray-600">
+                        <strong>Strength:</strong> Reduces overfitting and provides robust predictions by aggregating many trees.
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Limitations Section -->
+        <section data-aos="fade-up" class="mb-16 bg-blue-50 rounded-2xl shadow-md p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Understanding the Limitations</h2>
+            
+            <div class="space-y-6 max-w-4xl mx-auto">
+                <p class="text-gray-600">
+                    While our system uses advanced machine learning techniques, it's important to understand its limitations:
+                </p>
+                
+                <div class="flex items-start">
+                    <div class="text-red-500 mr-3 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <p class="text-gray-600 flex-1">
+                        <strong>No 100% Accuracy:</strong> No machine learning system can guarantee perfect accuracy. Our system provides probabilistic predictions based on patterns it has learned.
+                    </p>
+                </div>
+                
+                <div class="flex items-start">
+                    <div class="text-red-500 mr-3 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <p class="text-gray-600 flex-1">
+                        <strong>Content-Only Analysis:</strong> Our system analyzes only the text content of news articles, not images, videos, or external factors like the reputation of the source.
+                    </p>
+                </div>
+                
+                <div class="flex items-start">
+                    <div class="text-red-500 mr-3 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <p class="text-gray-600 flex-1">
+                        <strong>Evolving Language:</strong> As the language of misinformation evolves, the system may need updates to maintain its effectiveness.
+                    </p>
+                </div>
+                
+                <div class="flex items-start">
+                    <div class="text-red-500 mr-3 mt-1">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
+                        </svg>
+                    </div>
+                    <p class="text-gray-600 flex-1">
+                        <strong>Satirical Content:</strong> The system may not always distinguish between intentional satire and fake news, as they can share similar linguistic patterns.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="mt-8 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                <p class="text-yellow-800">
+                    <strong>Important:</strong> Always use critical thinking and verify news from multiple reliable sources, regardless of our system's prediction.
+                </p>
+            </div>
+        </section>
+        
+        <!-- CTA Section -->
+        <section data-aos="fade-up" class="text-center mb-16">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Ready to Try It?</h2>
+            <p class="text-gray-600 mb-8 max-w-2xl mx-auto">
+                Now that you understand how our fake news detection system works, you can try analyzing news articles.
+            </p>
+            <a href="/analyze" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg transition-colors shadow-md hover:shadow-lg">
+                Start Analysis
+            </a>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-10">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Fake News Detector</h3>
+                    <p class="text-gray-400">Using machine learning to help you identify reliable news sources and combat misinformation.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="/analyze" class="text-gray-400 hover:text-white transition-colors">Analyze News</a></li>
+                        <li><a href="/how-it-works" class="text-gray-400 hover:text-white transition-colors">How It Works</a></li>
+                        <li><a href="/about" class="text-gray-400 hover:text-white transition-colors">About</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Resources</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Media Literacy Guide</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Fact-Checking Resources</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Research Papers</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-6 text-center">
+                <p class="text-gray-400">Fake News Detector &copy; 2025 | Made with ❤️ using Machine Learning</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Animate On Scroll
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true
+            });
+        });
+    </script>
+</body>
+</html>
